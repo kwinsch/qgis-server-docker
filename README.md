@@ -9,7 +9,7 @@ Example URL's
     # - http://server/services/ogc?MAP=project.qgs&SERVICE=WMS
     # - http://server/services/ogc?MAP=folder1/subfolder/project.qgs&SERVICE=WMS
 ```
-Where `server` is your IP address or domain name of the docker host. If you run on a port different than `80`, also add the configured port. E.g. `http://192.168.1.100:8004/services/ogc?MAP=folder1/subfolder/project.qgs&SERVICE=WMS`. The MAP query parameter shall be the relative path to your project folder. Say you placed your QGIS project `deploy.qgs` in `/tmp/qgis/projects/public/deploy.qgs`, the project should be reachable under `http://192.168.1.100:8004/services/ogc?MAP=folder1/public/deploy.qgs&SERVICE=WMS`
+Where `server` is your IP address or domain name of the docker host. If you run on a port different than `80`, also add the configured port. E.g. `http://192.168.1.100:8004/services/ogc?MAP=folder1/subfolder/project.qgs&SERVICE=WMS`. The MAP query parameter shall be the relative path to your project folder. Say you placed your QGIS project `deploy.qgs` in `/tmp/qgis/projects/public/deploy.qgs`, the project should be reachable under `http://192.168.1.100:8004/services/ogc?MAP=public/deploy.qgs&SERVICE=WMS`
 
 Use at your own risk and have a look at the files before execution.
 
