@@ -8,9 +8,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade -y
 
 # Install QGIS repository key
-RUN apt install -y wget && \
-    wget -O /etc/apt/keyrings/qgis-archive-keyring.gpg https://download.qgis.org/downloads/qgis-archive-keyring.gpg && \
-    apt purge -y wget
+RUN apt install -y gnupg && \
+    gpg --keyserver keyserver.ubuntu.com --recv-keys  0xD155B8E6A419C5BE && \
+    gpg --export '0xD155B8E6A419C5BE' > /etc/apt/keyrings/qgis-archive-keyring.gpg && \ 
+    apt purge -y gnupg
 
 # Add QGIS repository configuration
 COPY conf/apt/qgis.sources /etc/apt/sources.list.d/qgis.sources
@@ -22,6 +23,10 @@ RUN apt update && \
     nginx \
     supervisor && \
     rm -rf /var/lib/apt/lists/*
+
+# Clean up
+RUN apt autoremove -y && \
+    apt autoclean -y
 
 # Copy supervisord configuration
 COPY conf/supervisord/qgis-server.conf /usr/local/etc/qgis-server.conf
