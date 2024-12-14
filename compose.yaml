@@ -1,0 +1,12 @@
+volumes:
+  qgis-server:
+
+services:
+  app:
+    image: kwinsch/qgis-server-docker
+    restart: always
+    container_name: qgis-server
+    ports:
+      - 7004:80
+    volumes:
+      - qgis-server:/var/local/qgis
