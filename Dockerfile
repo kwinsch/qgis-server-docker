@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade -y
 
 # Install QGIS repository key
-RUN apt install -y gnupg && \
+RUN apt install -y gnupg ca-certificates && \
     gpg --keyserver keyserver.ubuntu.com --recv-keys  0xD155B8E6A419C5BE && \
     gpg --export '0xD155B8E6A419C5BE' > /etc/apt/keyrings/qgis-archive-keyring.gpg && \ 
     apt purge -y gnupg
