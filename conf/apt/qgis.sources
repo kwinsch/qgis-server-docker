@@ -1,5 +1,5 @@
 Types: deb deb-src
-URIs: https://qgis.org/debian
+URIs: https://qgis.org/debian-nightly-release
 Suites: unstable
 Architectures: amd64
 Components: main

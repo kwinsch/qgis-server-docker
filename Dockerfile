@@ -1,5 +1,4 @@
-# Use debian unstable-slim as base image
-FROM debian:unstable-slim
+FROM debian:unstable
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -15,18 +14,23 @@ RUN apt install -y gnupg ca-certificates && \
 
 # Add QGIS repository configuration
 COPY conf/apt/qgis.sources /etc/apt/sources.list.d/qgis.sources
+#COPY conf/apt/sources.list /etc/apt/sources.list
+
+# Fix broken installs that may happen in unstable
+RUN rm /var/lib/apt/lists/*_* && \
+    apt update && \
+    apt --fix-broken install -y
 
 # Install required packages
-RUN apt update && \
-    apt install -y \
+RUN apt install -y \
     qgis-server \
     nginx \
-    supervisor && \
-    rm -rf /var/lib/apt/lists/*
+    supervisor 
 
 # Clean up
 RUN apt autoremove -y && \
-    apt autoclean -y
+    apt autoclean -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy supervisord configuration
 COPY conf/supervisord/qgis-server.conf /usr/local/etc/qgis-server.conf
