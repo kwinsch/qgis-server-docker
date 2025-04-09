@@ -1,4 +1,4 @@
-This dockerfile was created to simply deploy a minimal qgis-server that is self contained in a single image. If you are in search for a micro-service architecture, please consider other docker images that may better fit in production Kubernetes clusters.
+This dockerfile was created to simply deploy a minimal qgis-server that is self contained in a single image. If you are in search for a micro-service architecture, please consider other docker images that may better fit in production Kubernetes clusters. 
 
 To build the Docker container run `sudo docker build -t qgis-server-docker:latest .` which will build and push the image to your local docker registry.
 
