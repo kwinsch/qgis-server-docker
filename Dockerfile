@@ -1,5 +1,4 @@
-ARG ubuntu_dist=noble
-FROM ubuntu:${ubuntu_dist}
+FROM ubuntu:noble
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -11,7 +10,7 @@ RUN apt update && apt upgrade -y
 RUN apt install -y gnupg wget software-properties-common && \
     wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import && \
     chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg && \
-    add-apt-repository "deb https://qgis.org/ubuntu ${ubuntu_dist} main" 
+    add-apt-repository "deb https://qgis.org/ubuntu noble main" 
     
 # Fix broken installs that may happen in unstable
 RUN rm /var/lib/apt/lists/*_* && \
