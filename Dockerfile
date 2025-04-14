@@ -1,4 +1,5 @@
-FROM debian:unstable
+ARG ubuntu_dist=noble
+FROM ubuntu:${ubuntu_dist}
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -6,16 +7,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Update base system
 RUN apt update && apt upgrade -y
 
-# Install QGIS repository key
-RUN apt install -y gnupg ca-certificates && \
-    gpg --keyserver keyserver.ubuntu.com --recv-keys  0xD155B8E6A419C5BE && \
-    gpg --export '0xD155B8E6A419C5BE' > /etc/apt/keyrings/qgis-archive-keyring.gpg && \ 
-    apt purge -y gnupg
-
-# Add QGIS repository configuration
-COPY conf/apt/qgis.sources /etc/apt/sources.list.d/qgis.sources
-#COPY conf/apt/sources.list /etc/apt/sources.list
-
+# Install QGIS repository key and add repository
+RUN apt install -y gnupg wget software-properties-common && \
+    wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import && \
+    chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg && \
+    add-apt-repository "deb https://qgis.org/ubuntu ${ubuntu_dist} main" 
+    
 # Fix broken installs that may happen in unstable
 RUN rm /var/lib/apt/lists/*_* && \
     apt update && \
@@ -24,6 +21,8 @@ RUN rm /var/lib/apt/lists/*_* && \
 # Install required packages
 RUN apt install -y \
     qgis-server \
+    python3-qgis \
+    xvfb \
     nginx \
     supervisor 
 
