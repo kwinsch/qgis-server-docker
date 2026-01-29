@@ -1,48 +1,53 @@
-FROM ubuntu:noble
+ARG UBUNTU_VERSION=noble
+FROM ubuntu:${UBUNTU_VERSION}
 
-# Avoid interactive prompts during package installation
+ARG QGIS_TRACK=lr
+ARG UBUNTU_CODENAME=noble
+
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update base system
-RUN apt update && apt upgrade -y
+RUN apt-get update && apt-get upgrade -y
 
-# Install QGIS repository key and add repository
-RUN apt install -y gnupg wget software-properties-common && \
-    wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import && \
-    chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg && \
-    add-apt-repository "deb https://qgis.org/ubuntu noble main" 
-    
-# Fix broken installs that may happen in unstable
-RUN rm /var/lib/apt/lists/*_* && \
-    apt update && \
-    apt --fix-broken install -y
+RUN apt-get install -y gnupg wget software-properties-common ca-certificates && \
+    mkdir -m755 -p /etc/apt/keyrings && \
+    wget -qO /etc/apt/keyrings/qgis-archive-keyring.gpg \
+        https://download.qgis.org/downloads/qgis-archive-keyring.gpg
 
-# Install required packages
-RUN apt install -y \
+RUN case "${QGIS_TRACK}" in \
+        ltr) REPO_URL="https://qgis.org/ubuntu-ltr" ;; \
+        lr)  REPO_URL="https://qgis.org/ubuntu" ;; \
+        dev) REPO_URL="https://qgis.org/ubuntu-nightly" ;; \
+        *)   echo "Unknown track: ${QGIS_TRACK}" && exit 1 ;; \
+    esac && \
+    printf 'Types: deb\nURIs: %s\nSuites: %s\nArchitectures: amd64\nComponents: main\nSigned-By: /etc/apt/keyrings/qgis-archive-keyring.gpg\n' \
+        "$REPO_URL" "${UBUNTU_CODENAME}" > /etc/apt/sources.list.d/qgis.sources
+
+RUN rm -f /var/lib/apt/lists/*_* && \
+    apt-get update && \
+    apt-get --fix-broken install -y
+
+RUN apt-get install -y \
     qgis-server \
     python3-qgis \
     xvfb \
     nginx \
-    supervisor 
+    supervisor
 
-# Clean up
-RUN apt autoremove -y && \
-    apt autoclean -y && \
+RUN apt-get autoremove -y && \
+    apt-get autoclean -y && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy supervisord configuration
 COPY conf/supervisord/qgis-server.conf /usr/local/etc/qgis-server.conf
 COPY conf/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf
 
-# Remove default nginx config
 RUN rm -f /etc/nginx/sites-enabled/default
 
-# Copy and setup start script
 COPY conf/start.sh /usr/local/bin/start.sh
 RUN chmod 755 /usr/local/bin/start.sh
 
-# Define volume for persistent data
+LABEL org.opencontainers.image.title="QGIS Server" \
+      qgis.track="${QGIS_TRACK}"
+
 VOLUME /var/local/qgis
 
-# Start script as entrypoint
 CMD ["/usr/local/bin/start.sh"]
