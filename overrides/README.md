@@ -16,7 +16,12 @@ overrides/
 
 ## Active Overrides
 
-None currently.
+### LTR → Ubuntu Noble (24.04)
+
+QGIS 3.44.x (LTR) depends on Qt5, which was removed from Ubuntu Resolute (26.04).
+The LTR override pins the base image to Noble where Qt5 packages are available.
+
+**Remove when:** LTR moves to a Qt6-based version (QGIS 4.2 LTR, expected Jul 2026).
 
 ## When to Use
 

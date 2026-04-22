@@ -4,25 +4,33 @@
 
 Visit https://qgis.org/resources/roadmap/ and note:
 
-| Track | Column | Current (Mar 2026) |
-|-------|--------|--------------------|
-| LTR | Long-Term Repo | 3.44.x |
-| LR | Latest | 4.0.x |
-| Dev | (master) | 4.1+ |
+| Track | Column | Current (Apr 2026) | Base Image |
+|-------|--------|--------------------|--------------------|
+| LTR | Long-Term Repo | 3.44.x | Noble 24.04 (Qt5) |
+| LR | Latest | 4.0.x | Resolute 26.04 (Qt6) |
+| Dev | (master) | 4.1+ | Resolute 26.04 (Qt6) |
+
+> **Note:** QGIS 4.0+ requires Qt6. Noble (24.04) only has Qt5, so LTR uses
+> an override Dockerfile (`overrides/ltr/Dockerfile`) pinned to Noble.
+> LR and Dev use the default Dockerfile on Resolute. This split goes away
+> when LTR moves to Qt6 (QGIS 4.2 LTR, expected Jul 2026).
 
 ## Local Test (Optional)
 
 ```bash
-# Build specific track with buildah
-buildah bud --build-arg QGIS_TRACK=ltr -t test:ltr .
+# LTR uses override Dockerfile (Noble/Qt5)
+buildah bud -f overrides/ltr/Dockerfile -t test:ltr .
+
+# LR and Dev use default Dockerfile (Resolute/Qt6)
 buildah bud --build-arg QGIS_TRACK=lr -t test:lr .
 buildah bud --build-arg QGIS_TRACK=dev -t test:dev .
 
 # List built images
 buildah images
 
-# Run container to verify QGIS version (requires podman)
+# Verify QGIS version (requires podman)
 podman run --rm test:ltr /usr/lib/cgi-bin/qgis_mapserv.fcgi --version
+podman run --rm test:lr /usr/lib/cgi-bin/qgis_mapserv.fcgi --version
 ```
 
 ## Create Release
