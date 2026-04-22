@@ -4,11 +4,11 @@
 
 Visit https://qgis.org/resources/roadmap/ and note:
 
-| Track | Column | Current (Jan 2026) | After Feb 2026 |
-|-------|--------|-------------------|----------------|
-| LTR | Long-Term Repo | 3.40.x | 3.44.x |
-| LR | Latest | 3.44.x | 4.0.x |
-| Dev | (master) | 3.99/4.0 | 4.1+ |
+| Track | Column | Current (Mar 2026) |
+|-------|--------|--------------------|
+| LTR | Long-Term Repo | 3.44.x |
+| LR | Latest | 4.0.x |
+| Dev | (master) | 4.1+ |
 
 ## Local Test (Optional)
 
